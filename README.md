@@ -34,4 +34,3 @@ python app.py
     └── index.html
 ```
 
-Replace `avatar-placeholder.png` with your own image and tweak `templates/index.html` and `static/styles.css` as needed.
