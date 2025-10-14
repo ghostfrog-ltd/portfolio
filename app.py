@@ -1,5 +1,6 @@
 from flask import Flask, render_template, send_from_directory
 import os
+from datetime import datetime
 
 def create_app():
     app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -12,7 +13,8 @@ def create_app():
 
     @app.route('/')
     def home():
-        return render_template('index.html')
+        year = datetime.now().year
+        return render_template('index.html', year=year)
 
     @app.route('/favicon.ico')
     def favicon():
