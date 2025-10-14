@@ -4,7 +4,6 @@ import os
 def create_app():
     app = Flask(__name__, static_folder='static', template_folder='templates')
 
-    # Basic cache headers for static assets in production
     @app.after_request
     def add_header(response):
         if 'Cache-Control' not in response.headers:
@@ -15,15 +14,18 @@ def create_app():
     def home():
         return render_template('index.html')
 
-    # Optional: serve favicon if you add one later
     @app.route('/favicon.ico')
     def favicon():
-        return send_from_directory(os.path.join(app.root_path, 'static'),
-                                   'favicon.ico', mimetype='image/vnd.microsoft.icon')
+        return send_from_directory(
+            os.path.join(app.root_path, 'static'),
+            'favicon.ico',
+            mimetype='image/vnd.microsoft.icon'
+        )
 
     return app
 
-# For local dev: `python app.py`
+# 👇 add this so `gunicorn app:app` works
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5050)), debug=True)
