@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+
+
+    <!-- 🌐 Basic SEO -->
+    <title>Gary Constable — Full-Stack Developer | Python, AI & Adobe (Magento) E-Commercee</title>
+    <meta name="description"
+        content="Gary Constable is a full-stack developer with 15+ years of experience building fast, scalable e-commerce and AI-powered web applications.">
+    <meta name="author" content="Gary Constable">
+    <meta name="robots" content="index, follow">
+
+    <!-- 📱 Mobile & viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 📸 Open Graph (OG) -->
+    <meta property="og:title" content="Gary Constable — Full-Stack Developer">
+    <meta property="og:description"
+        content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://garyconstable.co.uk/"> <!-- change to your domain -->
+    <meta property="og:image" content="https://garyconstable.co.uk/static/avatar-placeholder.png">
+    <!-- replace with your hosted avatar -->
+    <meta property="og:site_name" content="Gary Constable">
+
+    <!-- 🐦 Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gary Constable — Full-Stack Developer">
+    <meta name="twitter:description"
+        content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
+    <meta name="twitter:image" content="https://garyconstable.co.uk/static/avatar-placeholder.png">
+    <!-- replace with your image -->
+
+    <!-- 🧭 Favicon (optional) -->
+    <link rel="icon" type="image/png" href="/static/avatar-placeholder.png">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LL5FVE7Z1J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-LL5FVE7Z1J');
+    </script>
+
+</head>
+
+<body>
+    <main class="container">
+        <header class="hero">
+            <img class="avatar" src="{{ url_for('static', filename='avatar-placeholder.png') }}" alt="Avatar">
+            <h1 class="name">Gary Constable <sup>AKA GhostFrog</sup></h1>
+            <p class="subtitle">Fullstack Developer</p>
+        </header>
+
+        <section id="about" class="grid w-full card">
+            <h2>/error</h2>
+            <div>
+                <h1>404</h1>
+                <p>Oops… looks like you’re lost in the swamp</p>
+                <a href="/">Back to Home</a>
+            </div>
+        </section>
+
+
+        <footer class="foot">
+            <p class="note">&copy; {{ year }} Ghostfrog Ltd. All rights reserved.</p>
+        </footer>
+    </main>
+</body>
+
+</html>

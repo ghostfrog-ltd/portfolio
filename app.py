@@ -5,6 +5,10 @@ from datetime import datetime
 def create_app():
     app = Flask(__name__, static_folder='static', template_folder='templates')
 
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
+
     @app.after_request
     def add_header(response):
         if 'Cache-Control' not in response.headers:
