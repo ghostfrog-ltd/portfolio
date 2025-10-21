@@ -48,29 +48,27 @@
     </script>
 
 </head>
-
 <body>
-    <main class="container">
-        <header class="hero">
-            <img class="avatar" src="{{ url_for('static', filename='avatar-placeholder.png') }}" alt="Avatar">
-            <h1 class="name">Gary Constable <sup>AKA GhostFrog</sup></h1>
-            <p class="subtitle">Fullstack Developer</p>
-        </header>
+    
+  <main class="container">
 
-        <section id="about" class="grid w-full card">
-            <h2>/error</h2>
-            <div>
-                <h1>404</h1>
-                <p>Oops… looks like you’re lost in the swamp</p>
-                <a href="/">Back to Home</a>
-            </div>
-        </section>
+   {% include 'partials/header.html' %}
 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+                <li class="flash">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
 
-        <footer class="foot">
-            <p class="note">&copy; {{ year }} Ghostfrog Ltd. All rights reserved.</p>
-        </footer>
+    {% block content %}{% endblock %}
+
+    {% include 'partials/footer.html' %}
+
     </main>
-</body>
 
+</body>
 </html>

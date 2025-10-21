@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Main -->
+<div id="main">
+    <div class="inner">
+        <header class="mb-5">
+
+            <h1 class="lead">Civil Service Job Matcher</h1>
+            <p class="subtitle">
+                An AI-powered CV tool that scrapes live Civil Service job listings, compares them with your experience,
+                and generates tailored STAR-format responses to help with applications.
+            </p>
+
+            <p>
+                <a class="button" href="/downloads/civil-service-job-matcher.zip" target="_blank" rel="noopener">
+                    🚀 Download the Civil Service Matcher
+                </a>
+            </p>
+
+
+        </header>
+        <section class="tiles_">
+            <article class="style1">
+
+
+                <h2>🛠 Why I Built This</h2>
+                <p>
+                    As someone aiming to transition into UK Civil Service tech roles, I found it tedious to
+                    manually scan jobs and tailor STAR answers. This project automates that: scraping developer
+                    jobs in real time, comparing them to my CV, and using GPT-4 to generate role-specific
+                    responses.
+                </p>
+
+                <h2>🧰 Technologies Used</h2>
+                <ul class="features">
+                    <li><strong>Flask</strong> — Web framework powering the interface</li>
+                    <li><strong>LangChain</strong> — LLM orchestration and chaining logic</li>
+                    <li><strong>GPT-4</strong> — For generating STAR-format interview responses</li>
+                    <li><strong>Playwright + Stealth</strong> — Browser automation for scraping Civil Service
+                        Jobs (bypasses bot
+                        protection)
+                    </li>
+                    <li><strong>Async Python</strong> — Speeds up job processing for a smoother user experience
+                    </li>
+                </ul>
+
+                <h2>⚙️ What It Does</h2>
+                <ul class="features">
+                    <li>Scrapes current Civil Service developer job listings</li>
+                    <li>Analyzes job descriptions against your CV</li>
+                    <li>Uses GPT-4 to write tailored STAR-format responses</li>
+                    <li>Displays links, summaries, and generated responses in-browser</li>
+                </ul>
+
+                <div style="background: #fff3cd; color: #856404; padding: 1rem; border-left: 5px solid #ffeeba; margin-bottom: 2rem;">
+                    <h2>🚧 Coming Soon</h2>
+                    <ul class="features">
+                        <li>🔎 Skill gap analysis with AI-generated recommendations</li>
+                        <li>💬 Follow-up Q&A chatbot to refine STAR responses</li>
+                        <li>📄 PDF export and email-ready templates</li>
+                        <li>🧠 Smarter filtering by department, salary, or hybrid roles</li>
+                    </ul>
+                </div>
+
+                <p>
+                    <a href="/downloads/civil-service-job-matcher.zip" class="btn">Download the Matcher</a>
+                    or <a href="#footer">contact me</a> to contribute, fork it, or collaborate.
+                </p>
+
+
+            </article>
+        </section>
+    </div>
+</div>
+
+{% endblock %}
