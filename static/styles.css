@@ -1,26 +1,41 @@
 /* Simple stylesheet inspired by the source page layout */
 :root {
-  --bg: #0f1724;
+  --bg-old-2: rgb(30 27 28);
+  --bg-old-1: rgb(24 22 23);
+  --bg-old: #0f1724;
+  --bg: rgb(25 25 28);
   --card: #0b1220;
   --muted: #9ca3af;
   --accent: #8b5cf6;
-  --text:  #8f8f8f;
+  --text-old-2:  #8f8f8f;
+  --text-old-1: #c8bebe;
+  --text-old-1: #fff;
+  --text: #8f8c8c;
   --radius: 12px;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 * {box-sizing: border-box}
 a{ color: var(--text);text-decoration: underline;;}
-html,body { height: 100%; margin: 0; background-color: rgb(30 27 28);color: var(--text)}
+html,body { height: 100%; margin: 0;  background-color: var(--bg); color: var(--text); font-weight: 100;}
 .container { max-width: 760px; margin: 44px auto; padding: 28px}
 .hero {text-align: left; padding: 24px 0}
 .avatar { width: 88px; height: 88px;border-radius: 12px; display: block; margin: 0 0 12px; background: #172033; border: solid 2px white; ;}
 #about p{ font-size: 1.2rem; line-height: 1.5;}
-.name {font-size: 28px; margin: 6px 0}
+.name {font-size: 28px; margin: 6px 0;color:white;}
 .name sup{ font-size: 0.6rem; font-weight: 100; position: relative; top: -18px;left: -11px;}
 .subtitle { margin: 0 0 6px}
 .grid {display: grid;}
 .w-full {width: 100%;}
-.card { padding: 18px; border-radius: var(--radius);margin: 16px 0;display: grid;grid-template-columns: 40px 1fr;grid-column-gap: 50px;grid-row-gap: 50px; align-items: baseline;}
+.card {
+ padding: 10px 18px;
+    border-radius: var(--radius);
+    margin: 0px 0;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    grid-column-gap: 50px;
+    grid-row-gap: 50px;
+    align-items: baseline;
+ }
 .card h2 { margin: 0 0 10px; color: #646565;text-transform: lowercase;font-weight: 200;font-size: 1rem;}
 .links { display: flex;}
 .links,.projects {list-style: none; padding: 0; margin: 0}
@@ -30,4 +45,34 @@ html,body { height: 100%; margin: 0; background-color: rgb(30 27 28);color: var(
 
 @media (max-width: 480px) {
   .card { display: flex; flex-direction: column; padding: 0; grid-row-gap: 0; margin-bottom: 3rem; }
+}
+
+ul.projects li {
+    width: 47%;
+    box-sizing: border-box;
+    border: solid 1px #ffffff2b;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+ul.projects {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+ul.projects li a{
+    text-decoration: none;
+    width:100%;
+}
+
+ul.projects li div{
+      padding: 13px 16px;
+    height: 80px;
+    background-image: linear-gradient(to right top, #171718, #ffffff08);
+    color: white;
+    display: inline-flex;
+    width: 100%;
+    align-items: flex-end;
 }
