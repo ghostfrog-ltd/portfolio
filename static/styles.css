@@ -43,9 +43,6 @@ html,body { height: 100%; margin: 0;  background-color: var(--bg); color: var(--
 .foot { margin-top: 22px; text-align: center; color: var(--muted); font-size: 14px}
 .note { margin-top: 6px; font-size: 0.6rem;  color: var(--text);}
 
-@media (max-width: 480px) {
-  .card { display: flex; flex-direction: column; padding: 0; grid-row-gap: 0; margin-bottom: 3rem; }
-}
 
 ul.projects li {
     width: 47%;
@@ -75,4 +72,12 @@ ul.projects li div{
     display: inline-flex;
     width: 100%;
     align-items: flex-end;
+}
+
+@media (max-width: 480px) {
+  .card { display: flex; flex-direction: column; padding: 0; grid-row-gap: 0; margin-bottom: 3rem; }
+}
+
+@media (max-width: 690px) {
+  ul.projects li {width:100%;}
 }
