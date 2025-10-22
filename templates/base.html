@@ -1,12 +1,10 @@
 <!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
 
-
     <!-- 🌐 Basic SEO -->
-    <title>Gary Constable — Full-Stack Developer | Python, AI & Adobe (Magento) E-Commercee</title>
+    <title>{{ title or "Gary Constable — Full-Stack Developer | Python, AI & Adobe (Magento) E-Commerce" }}</title>
     <meta name="description"
         content="Gary Constable is a full-stack developer with 15+ years of experience building fast, scalable e-commerce and AI-powered web applications.">
     <meta name="author" content="Gary Constable">
@@ -27,8 +25,7 @@
     <!-- 🐦 Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Gary Constable — Full-Stack Developer">
-    <meta name="twitter:description"
-        content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
+    <meta name="twitter:description" content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
     <meta name="twitter:image" content="https://ghostfrog.co.uk/static/avatar-placeholder.png">
     <!-- replace with your image -->
 
@@ -37,15 +34,18 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LL5FVE7Z1J"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+     {% if request.host == "garyconstable.co.uk" or request.host == "www.garyconstable.co.uk"
+    or  request.host == "ghostfrog.co.uk" or request.host == "www.ghostfrog.co.uk" %}
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-LL5FVE7Z1J"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
 
-        gtag('config', 'G-LL5FVE7Z1J');
-    </script>
+            gtag('config', 'G-LL5FVE7Z1J');
+        </script>
+    {% endif %}
 
 </head>
 <body>
