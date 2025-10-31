@@ -148,9 +148,12 @@ def ebay_webhook():
 
     # --- 4️⃣ Send email to you ---
     try:
+        recipients_env = os.environ.get('EBAY_WEBHOOK_RECIPIENTS', '').strip()
+        recipients = [r.strip() for r in recipients_env.split(',') if r.strip()] or ['garyconstable80@gmail.com']
+
         msg = Message(
             subject='[GhostFrog] eBay Webhook Event',
-            recipients=['garyconstable80@gmail.com', 'info@ghostfrog.co.uk'],
+            recipients=recipients,
             body=email_body,
         )
         mail.send(msg)
