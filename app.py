@@ -100,96 +100,58 @@ def page_not_found(e):
     return render_template('404.html', title='404 – Not Found'), 404
 
 # 🐸 eBay Webhook Receiver
-@app.route('/webhooks/ebay', methods=['POST', 'GET'])
+@app.route('/webhooks/ebay', methods=['GET', 'POST'])
 def ebay_webhook():
     """
-    Endpoint that eBay calls.
-    We grab the payload, optionally verify, then email it to you.
-    Returns 200 immediately so eBay doesn't retry forever.
+    Unified eBay webhook endpoint.
+    - Handles any event eBay POSTs (listing, test ping, or account deletion)
+    - Optionally verifies a shared verification token
+    - Emails full payload to Gary for visibility
     """
 
-    # 1. Raw body (bytes) in case we later want signature verification
-    raw_body = request.get_data(cache=False, as_text=False)
+    # --- 1️⃣ Optional token verification ---
+    expected_token = os.environ.get('EBAY_WEBHOOK_VERIFICATION_TOKEN', '').strip()
+    incoming_token = (
+        request.args.get('verificationToken')
+        or request.form.get('verificationToken')
+        or (request.get_json(silent=True) or {}).get('verificationToken')
+    )
 
-    # 2. Try JSON first
-    data_json = None
-    try:
-        data_json = request.get_json(silent=True)
-    except Exception:
-        data_json = None
+    if expected_token and incoming_token and incoming_token != expected_token:
+        print(f"[Webhook] Invalid verification token: {incoming_token!r}")
+        return jsonify({"error": "invalid verification token"}), 403
 
-    # 3. Fallback to form / query data
+    # --- 2️⃣ Capture all possible body formats ---
+    raw_body = request.get_data(cache=False, as_text=True)
+    json_body = request.get_json(silent=True)
     form_data = request.form.to_dict(flat=True)
     args_data = request.args.to_dict(flat=True)
 
-    # 4. Build a readable dump for the email body
+    # --- 3️⃣ Build email body ---
     parts = []
-
-    parts.append("🔔 eBay Webhook Hit\n")
+    parts.append("🔔 eBay Webhook Received\n")
     parts.append(f"Remote IP: {request.remote_addr}\n")
     parts.append(f"Headers:\n{json.dumps(dict(request.headers), indent=2)}\n")
 
-    if data_json is not None:
-        parts.append("JSON payload:\n")
-        parts.append(json.dumps(data_json, indent=2))
-        parts.append("\n")
-    else:
-        parts.append("JSON payload: <none or invalid JSON>\n")
+    if expected_token:
+        parts.append(f"Token check: {'PASSED' if incoming_token == expected_token else 'SKIPPED'}\n\n")
 
+    if json_body:
+        parts.append("JSON payload:\n" + json.dumps(json_body, indent=2) + "\n\n")
     if form_data:
-        parts.append("Form data:\n")
-        parts.append(json.dumps(form_data, indent=2))
-        parts.append("\n")
-
+        parts.append("Form data:\n" + json.dumps(form_data, indent=2) + "\n\n")
     if args_data:
-        parts.append("Query string args:\n")
-        parts.append(json.dumps(args_data, indent=2))
-        parts.append("\n")
+        parts.append("Query string:\n" + json.dumps(args_data, indent=2) + "\n\n")
 
-    # raw fallback
-    parts.append("Raw body bytes (utf-8 best effort):\n")
-    try:
-        parts.append(raw_body.decode('utf-8', errors='replace'))
-    except Exception:
-        parts.append("<could not decode raw body as utf-8>")
-    parts.append("\n")
+    parts.append("Raw body (UTF-8 best effort):\n" + raw_body[:2000] + "\n")
+    email_body = "".join(parts)
 
-    email_body = "\n".join(parts)
-
-    # 5. Optional: verify signature if you configure it
-    # eBay can sign callbacks depending on which webhook product you're using.
-    # We'll wire the scaffold so you can turn it on later without touching the route.
-    verification_note = ""
-    try:
-        expected_sig = os.environ.get('EBAY_WEBHOOK_SIGNATURE')  # shared secret YOU set
-        header_sig = request.headers.get('X-Ebay-Signature')
-
-        if expected_sig and header_sig:
-            # Example HMAC-SHA256 check (you may need to adjust based on eBay spec)
-            digest = hmac.new(
-                expected_sig.encode('utf-8'),
-                raw_body,
-                hashlib.sha256
-            ).hexdigest()
-
-            if hmac.compare_digest(digest, header_sig):
-                verification_note = "[OK] signature matched"
-            else:
-                verification_note = "[WARN] signature mismatch"
-        else:
-            verification_note = "[INFO] signature not checked (missing secret or header)"
-    except Exception as sig_err:
-        verification_note = f"[ERR] signature check error: {sig_err}"
-
-    email_body = verification_note + "\n\n" + email_body
-
-    # 6. Send email to you
+    # --- 4️⃣ Send email to you ---
     try:
         msg = Message(
             subject='[GhostFrog] eBay Webhook Event',
-            sender=app.config['MAIL_USERNAME'],
             recipients=['garyconstable80@gmail.com', 'info@ghostfrog.co.uk'],
-            body=email_body
+            body=email_body,
         )
         mail.send(msg)
         mailed = True
@@ -197,12 +159,8 @@ def ebay_webhook():
         print(f"[Webhook] Email send failed: {e}")
         mailed = False
 
-    # 7. Return JSON so eBay gets a clean 200
-    return jsonify({
-        "status": "ok",
-        "mailed": mailed,
-        "note": verification_note
-    }), 200
+    # --- 5️⃣ Respond to eBay immediately ---
+    return jsonify({"status": "ok", "mailed": mailed}), 200
 
 
 # 🚀 Run the App
