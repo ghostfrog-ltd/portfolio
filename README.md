@@ -29,7 +29,7 @@ python app.py
 ├── Procfile
 ├── static/
 │   ├── styles.css
-│   └── avatar-placeholder.png
+│   └── avatar-01.png
 └── templates/
     └── index.html
 ```
