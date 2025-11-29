@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
 
 
     <!-- 🌐 Basic SEO -->
     <title>Gary Constable — Full-Stack Developer | Python, AI & Adobe (Magento) E-Commercee</title>
     <meta name="description"
-        content="Gary Constable is a full-stack developer with 15+ years of experience building fast, scalable e-commerce and AI-powered web applications.">
+          content="Gary Constable is a full-stack developer with 15+ years of experience building fast, scalable e-commerce and AI-powered web applications.">
     <meta name="author" content="Gary Constable">
     <meta name="robots" content="index, follow">
 
@@ -17,7 +17,8 @@
 
     <!-- 📸 Open Graph (OG) -->
     <meta property="og:title" content="Gary Constable — Full-Stack Developer">
-    <meta property="og:description" content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
+    <meta property="og:description"
+          content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ghostfrog.co.uk/"> <!-- change to your domain -->
     <meta property="og:image" content="https://ghostfrog.co.uk/static/avatar-placeholder.png">
@@ -28,7 +29,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Gary Constable — Full-Stack Developer">
     <meta name="twitter:description"
-        content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
+          content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
     <meta name="twitter:image" content="https://ghostfrog.co.uk/static/avatar-placeholder.png">
     <!-- replace with your image -->
 
@@ -37,8 +38,8 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
-      {% if request.host == "garyconstable.co.uk" or request.host == "www.garyconstable.co.uk"
-    or  request.host == "ghostfrog.co.uk" or request.host == "www.ghostfrog.co.uk" %}
+    {% if request.host == "garyconstable.co.uk" or request.host == "www.garyconstable.co.uk"
+    or request.host == "ghostfrog.co.uk" or request.host == "www.ghostfrog.co.uk" %}
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LL5FVE7Z1J"></script>
     <script>
@@ -53,60 +54,78 @@
 </head>
 
 <body>
-  <main class="container">
+<main class="container">
     <header class="hero">
-      <img class="avatar" src="{{ url_for('static', filename='avatar-placeholder.png') }}" alt="Avatar">
-      <h1 class="name">Gary Constable <sup>AKA GhostFrog</sup></h1>
-      <p class="subtitle">Fullstack Developer</p>
+        <img class="avatar" src="{{ url_for('static', filename='avatar-placeholder.png') }}" alt="Avatar">
+        <h1 class="name">Gary Constable <sup>AKA GhostFrog</sup></h1>
+        <p class="subtitle">Fullstack Developer</p>
     </header>
 
     <section id="about" class="grid w-full card">
-      <h2>/About</h2>
-      <div>
-        <p>I’m a full-stack developer and builder with over 15 years of hands-on experience across e-commerce, AI, and
-          modern web development.</p>
+        <h2>/About</h2>
+        <div>
+            <p>I’m a full-stack developer and builder with over 15 years of hands-on experience across e-commerce, AI,
+                and
+                modern web development.</p>
 
-        <p>I love turning complex ideas into clean, fast, and scalable products. I’ve spent most of my career crafting
-          performant online experiences, automating business workflows, and bridging frontend polish with backend power.
-        </p>
+            <p>I love turning complex ideas into clean, fast, and scalable products. I’ve spent most of my career
+                crafting
+                performant online experiences, automating business workflows, and bridging frontend polish with backend
+                power.
+            </p>
 
-        <p>These days, I’m focused on Python, AI, and web platforms that actually make life easier.</p>
-      </div>
+            <p>These days, I’m focused on Python, AI, and web platforms that actually make life easier.</p>
+        </div>
+    </section>
+
+    <section id="blog" class="grid w-full card">
+        <h2>/Blog</h2>
+        <div>
+            <ul class="links">
+                <li><a href="/blog">Latest Posts</a></li>
+            </ul>
+        </div>
     </section>
 
     <section id="contact" class="grid w-full card">
-      <h2>/Contact</h2>
-      <div>
-        <ul class="links">
-          <li><a href="mailto:info@ghostfrog.co.uk" target="_blank">Email</a></li>
-        </ul>
-      </div>
+        <h2>/Contact</h2>
+        <div>
+            <ul class="links">
+                <li><a href="mailto:info@ghostfrog.co.uk" target="_blank">Email</a></li>
+            </ul>
+        </div>
     </section>
 
     <section id="socials" class="grid w-full card">
-      <h2>/Socials</h2>
-      <div>
-        <ul class="links">
-          <li><a href="https://github.com/ghostfrog-ltd" target="_blank">GitHub</a></li>
-        </ul>
-      </div>
+        <h2>/Socials</h2>
+        <div>
+            <ul class="links">
+                <li><a href="https://github.com/ghostfrog-ltd" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
     </section>
 
     <section id="projects" class="grid card">
-      <h2>/Projects</h2>
-      <div>
-        <ul class="projects">
-            <li><a href="/interview-assistant"><div>Civil service interview assistant</div></a></li>
-            <li><a href="/translator"><div>Plain English Translator</div></a></li>
-            <li><a href="/civil-service-job-matcher"><div>Developer Job Matcher</div></a></li>
-        </ul>
-      </div>
+        <h2>/Projects</h2>
+        <div>
+            <ul class="projects">
+                <li><a href="/interview-assistant">
+                    <div>Civil service interview assistant</div>
+                </a></li>
+                <li><a href="/translator">
+                    <div>Plain English Translator</div>
+                </a></li>
+                <li><a href="/civil-service-job-matcher">
+                    <div>Developer Job Matcher</div>
+                </a></li>
+            </ul>
+        </div>
     </section>
 
     <footer class="foot">
-      <p class="note">&copy; {{ year }} Ghostfrog Ltd. All rights reserved.</p>
+        <p class="note">&copy; {{ year }} Ghostfrog Ltd. All rights reserved.</p>
     </footer>
 
-  </main>
+</main>
 </body>
 </html>

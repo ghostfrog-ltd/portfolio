@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <h1>Blog</h1>
+  <p>Thoughts on Python, Agentic Systems, AI Projects, and Web Development.</p>
+
+  <ul>
+    {% for post in posts %}
+      <li>
+        <a href="{{ url_for('blog_post', slug=post.slug) }}">
+          <strong>{{ post.meta.title }}</strong>
+        </a>
+        <br>
+        <small>{{ post.meta.date }}</small>
+        <p>{{ post.meta.summary }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

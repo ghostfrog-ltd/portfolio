@@ -165,6 +165,81 @@ def ebay_webhook():
     # --- 5️⃣ Respond to eBay immediately ---
     return jsonify({"status": "ok", "mailed": mailed}), 200
 
+# -----------------------------------------
+# 📝 Simple Blog System (Markdown-based)
+# -----------------------------------------
+from markdown import markdown
+from pathlib import Path
+import re
+
+BLOG_POSTS_DIR = Path("content/blog")
+
+
+def load_post(slug: str):
+    """
+    Load a markdown post by slug (filename without .md)
+    """
+    filepath = BLOG_POSTS_DIR / f"{slug}.md"
+    if not filepath.exists():
+        return None
+
+    raw = filepath.read_text(encoding="utf-8")
+
+    # Extract optional YAML front matter
+    meta = {
+        "title": slug.replace("-", " ").title(),
+        "date": None,
+        "summary": "",
+    }
+
+    m = re.match(r"---\n(.*?)\n---\n(.*)$", raw, re.S)
+    if m:
+        raw_meta, content = m.groups()
+        for line in raw_meta.split("\n"):
+            if ":" in line:
+                key, val = line.split(":", 1)
+                meta[key.strip()] = val.strip().strip('"')
+    else:
+        content = raw
+
+    html_content = markdown(content)
+
+    return {"meta": meta, "content": html_content, "slug": slug}
+
+
+def list_posts():
+    posts = []
+    for file in BLOG_POSTS_DIR.glob("*.md"):
+        slug = file.stem
+        post = load_post(slug)
+        if post:
+            posts.append(post)
+    # newest first
+    posts.sort(key=lambda p: p["meta"].get("date", ""), reverse=True)
+    return posts
+
+
+@app.route("/blog")
+def blog_index():
+    posts = list_posts()
+    return render_template(
+        "blog/index.html",
+        posts=posts,
+        title="Blog – AI, Python, Magento, Agentic Systems | Gary Constable"
+    )
+
+
+@app.route("/blog/<slug>")
+def blog_post(slug):
+    post = load_post(slug)
+    if not post:
+        return render_template("404.html"), 404
+
+    return render_template(
+        "blog/post.html",
+        post=post,
+        title=post["meta"]["title"] + " – Blog | Gary Constable"
+    )
 
 # 🚀 Run the App
 if __name__ == '__main__':
