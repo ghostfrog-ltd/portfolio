@@ -19,7 +19,7 @@ a{ color: var(--text);text-decoration: underline;;}
 html,body { height: 100%; margin: 0;  background-color: var(--bg); color: var(--text); font-weight: 100;}
 .container { max-width: 760px; margin: 44px auto; padding: 28px}
 .hero {text-align: left; padding: 24px 0}
-.avatar { width: 88px; height: 88px;border-radius: 12px; display: block; margin: 0 0 12px; background: #172033; border: solid 2px white; ;}
+.avatar { width: 88px; height: 88px;border-radius: 12px; display: block; margin: 0 0 12px; background: #172033; border: solid 2px white; object-fit: cover;}
 #about p{ font-size: 1.2rem; line-height: 1.5;}
 .name {font-size: 28px; margin: 6px 0;color:white;}
 .name sup{ font-size: 0.6rem; font-weight: 100; position: relative; top: -18px;left: -11px;}

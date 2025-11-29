@@ -48,3 +48,11 @@ The entire GhostFrog architecture now runs agentically on my Mac.
 
 This project changed how I write code and how fast I build things.  
 And it’s only the beginning.
+
+### 🔁 Try yourself
+
+[View on Github](https://github.com/ghostfrog-ltd/bob)
+
+<br />
+
+

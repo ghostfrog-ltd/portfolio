@@ -38,3 +38,9 @@ It then sends:
 I also built a **unified webhook receiver** on my portfolio site to capture eBay events.
 
 GhostFrog is now the backbone of my data-driven flipping experiments — and one of the best engineering projects I’ve ever built.
+
+### 🔁 Try yourself
+
+[View on Github](https://github.com/ghostfrog-ltd/agentic-alert-bot)
+
+<br />
