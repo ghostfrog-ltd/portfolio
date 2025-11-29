@@ -22,8 +22,8 @@ from Projects.InterviewAssistant.interview_assistant_app import interview_assist
 app.register_blueprint(interview_assistant_bp)
 
 # 📦 Register Civil Service matcher Blueprint
-from Projects.CivilServiceMatcher.views import matcher_bp
-app.register_blueprint(matcher_bp, url_prefix='/projects/civil-service-matcher-app')
+#from Projects.CivilServiceMatcher.views import matcher_bp
+#app.register_blueprint(matcher_bp, url_prefix='/projects/civil-service-matcher-app')
 
 # 📧 Gmail SMTP Config
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'

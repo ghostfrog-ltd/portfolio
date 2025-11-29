@@ -2,10 +2,10 @@
 Flask==3.1.1
 gunicorn==23.0.0
 
-# If you're using Flask-Mail for the contact form
+# ---- Contact form / email (optional but installed) ----
 Flask-Mail==0.10.0
 
-# ---- OpenAI / API stuff (if/when you use it) ----
+# ---- OpenAI + API helpers ----
 openai==1.109.1
 requests==2.32.4
 python-dotenv==1.1.0
@@ -14,8 +14,8 @@ python-dotenv==1.1.0
 Markdown==3.10
 markdownify==1.2.2
 
-# ---- Optional: Postgres (if you hook up a DB later) ----
+# ---- Optional: Postgres (keep for future DB support) ----
 psycopg2-binary==2.9.11
 
-# ---- Optional: local testing only ----
+# ---- Testing only (safe to leave, but optional) ----
 pytest==9.0.1
