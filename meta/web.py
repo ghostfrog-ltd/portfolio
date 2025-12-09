@@ -8,6 +8,8 @@ from uuid import uuid4
 import subprocess
 from datetime import datetime, timezone
 
+from meta.core import TICKETS_DIR  # 👈 NEW
+
 USING_AI = False
 
 # Blueprint – mounted at /meta
@@ -30,8 +32,6 @@ meta_bp = Blueprint(
 
 # Assume this file is in project_root/bob/meta_web.py
 BASE_DIR = Path(__file__).resolve().parents[1]  # project root
-TICKETS_DIR = BASE_DIR / "data" / "meta" / "tickets"
-
 
 # ----------------- helpers -----------------
 
