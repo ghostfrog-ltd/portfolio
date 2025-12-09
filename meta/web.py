@@ -12,7 +12,7 @@ from meta.core import TICKETS_DIR  # 👈 NEW
 
 USING_AI = False
 
-# Blueprint – mounted at /meta
+# Blueprint – mounted at /meta - TEST DEPLOY!
 
 '''
 meta_bp = Blueprint(
