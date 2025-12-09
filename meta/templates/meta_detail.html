@@ -157,7 +157,7 @@
 
 {% if ticket.summary %}
 <h2>Summary</h2>
-<p>{{ ticket.summary }}</p>
+<p>{{ ticket.summary | replace('\n', '<br>') | safe }}</p>
 {% endif %}
 
 {% if ticket.acceptance_criteria %}
