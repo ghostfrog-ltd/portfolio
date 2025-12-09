@@ -36,8 +36,7 @@ logger = logging.getLogger("meta")
 
 ROOT_DIR = Path(__file__).resolve().parents[1]  # project root
 
-# If GF_DATA_ROOT is set (e.g. on Render), use that as the data root.
-# Otherwise default to the local ./data directory as before.
+# If GF_DATA_ROOT is set (e.g. on Render), use that as the data root. -  Otherwise default to the local ./data directory as before.
 _data_root_env = os.getenv("GF_DATA_ROOT")
 if _data_root_env:
     DATA_DIR = Path(_data_root_env)
