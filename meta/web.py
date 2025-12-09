@@ -8,6 +8,8 @@ from uuid import uuid4
 import subprocess
 from datetime import datetime, timezone
 
+USING_AI = False
+
 # Blueprint – mounted at /meta
 
 '''
@@ -193,12 +195,10 @@ def edit_ticket(ticket_id: str):
         area = (request.form.get("component") or "").strip()
         priority = (request.form.get("priority") or "medium").strip()
         summary = (request.form.get("summary") or "").strip()
-
+        category = (request.form.get("category") or ticket.get("category") or "general").strip()
         acceptance_raw = request.form.get("acceptance_criteria") or ""
         steps_raw = request.form.get("suggested_steps") or ""
         safe_paths_raw = request.form.get("safe_paths") or ""
-
-
         kind = (request.form.get("kind") or "self_improvement").strip()
 
         if not title:
@@ -232,8 +232,7 @@ def edit_ticket(ticket_id: str):
         ticket["suggested_steps"] = suggested_steps
         ticket["safe_paths"] = safe_paths
         ticket["kind"] = kind
-
-        print(ticket["kind"])
+        ticket["category"] = category
 
         # Keep id/ticket_id/created_at/kind/status as-is
         path = TICKETS_DIR / f"{ticket_id}.json"
@@ -255,14 +254,13 @@ def edit_ticket(ticket_id: str):
         "kind": ticket.get("kind","")
     }
 
-    print(form)
-
     return render_template(
         "meta_new.html",  # reuse same template
         error=None,
         form=form,
         ticket=ticket,
         edit_mode=True,
+        using_ai=USING_AI
     )
 
 
@@ -273,7 +271,7 @@ def new_ticket():
         area = (request.form.get("component") or "").strip()  # map component -> area
         priority = (request.form.get("priority") or "medium").strip()
         summary = (request.form.get("summary") or "").strip()
-
+        category = (request.form.get("category") or "general").strip()
         acceptance_raw = request.form.get("acceptance_criteria") or ""
         steps_raw = request.form.get("suggested_steps") or ""
 
@@ -328,6 +326,7 @@ def new_ticket():
             "last_run": None,
             "last_bob_reply": None,
             "last_chad_summary": None,
+            "category": category,  # 👈 NEW
         }
 
         TICKETS_DIR.mkdir(parents=True, exist_ok=True)
@@ -338,27 +337,52 @@ def new_ticket():
         return redirect(url_for("meta.meta_detail", ticket_id=ticket_id))
 
     # GET
-    return render_template("meta_new.html", error=None, form={})
+    return render_template("meta_new.html", error=None, form={}, using_ai=USING_AI)
 
 
 @meta_bp.route("/")
 def meta_index():
     """
-    Index page listing meta tickets, with optional status filter.
-    /meta?status=open | done | all
+    Index page listing meta tickets, with optional status + category filter.
+    /meta?status=open|done|all&category=foo|all
     """
 
-    print('HELLOW')
     status = request.args.get("status", "open")  # default: open
+    category = request.args.get("category", "all")
+
+    # Load all tickets once
     tickets = list_all_tickets()
 
+    # Build list of available categories from all tickets
+    categories = sorted(
+        {
+            t.get("category")
+            for t in tickets
+            if t.get("category")
+        }
+    )
+
+    # Filter by status
     if status in {"open", "done"}:
         tickets = [
             t for t in tickets
             if (t.get("status") or "open") == status
         ]
 
-    return render_template("meta_index.html", tickets=tickets, current_status=status)
+    # Filter by category (skip if "all")
+    if category != "all":
+        tickets = [
+            t for t in tickets
+            if t.get("category") == category
+        ]
+
+    return render_template(
+        "meta_index.html",
+        tickets=tickets,
+        current_status=status,
+        current_category=category,
+        categories=categories,
+    )
 
 
 @meta_bp.route("/<ticket_id>")

@@ -37,3 +37,6 @@ Thumbs.db
 .cache/
 
 # https://zoma.dev/
+
+
+data/meta/*

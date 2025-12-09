@@ -53,12 +53,14 @@
 {% endif %}
 
 <form method="post">
+
     <label>
         Title
         <input type="text" name="title" required
                value="{{ (form.title or '') if form else '' }}">
     </label>
 
+    {% if using_ai %}
     <label>
         Component
         <input type="text" name="component"
@@ -66,25 +68,31 @@
                value="{{ (form.component or '') if form else '' }}">
         <div class="hint">Rough area of the codebase this affects.</div>
     </label>
+    {% endif %}
 
     <label>
         Priority
+        {% set current_prio = (form.priority or 'medium') if form else 'medium' %}
         <select name="priority">
-            {% set current_prio = (form.priority or 'medium') if form else 'medium' %}
-            <option value="low" {% if current_prio==
-            'low' %}selected{% endif %}>Low</option>
-            <option value="medium" {% if current_prio==
-            'medium' %}selected{% endif %}>Medium</option>
-            <option value="high" {% if current_prio==
-            'high' %}selected{% endif %}>High</option>
+            <option value="low" {% if current_prio=='low' %}selected{% endif %}>Low</option>
+            <option value="medium" {% if current_prio=='medium' %}selected{% endif %}>Medium</option>
+            <option value="high" {% if current_prio=='high' %}selected{% endif %}>High</option>
         </select>
     </label>
 
     <label>
-        Kind
-        <select name="kind">
+        Category
+        <input type="text" name="category"
+               placeholder="e.g. bob, ghostfrog, infra, bug, feature"
+               value="{{ (form.category or '') if form else '' }}">
+        <div class="hint">Used for filtering tickets on the index page.</div>
+    </label>
 
-            {% set current_kind = (form.kind or 'self_improvement') if form else 'self_improvement' %}
+    {% if using_ai %}
+    <label>
+        Kind
+        {% set current_kind = (form.kind or 'self_improvement') if form else 'self_improvement' %}
+        <select name="kind">
             <option value="self_improvement"
                     {% if current_kind=='self_improvement' %}selected{% endif %}>
                 Self improvement (Bob/Chad fix themselves)
@@ -95,11 +103,11 @@
             </option>
         </select>
         <div class="hint">
-            Self improvement = change code & run pytest.
-            Action = use tools (e.g. send_email), no code edits.
+            Self improvement = change code & run pytest.<br>
+            Action = use tools (email, scripts, etc.), no codemods.
         </div>
     </label>
-
+    {% endif %}
 
     <label>
         Summary
@@ -107,27 +115,33 @@
                   placeholder="Short description of what this ticket is about.">{{ (form.summary or '') if form else '' }}</textarea>
     </label>
 
+    {% if using_ai %}
     <label>
         Acceptance criteria
         <textarea name="acceptance_criteria"
-                  placeholder="- When I do X, Y happens&#10;- Error Z no longer appears">{{ (form.acceptance_criteria or '') if form else '' }}</textarea>
+                  placeholder="- When I do X, Y happens&#10;- Z error no longer appears">{{ (form.acceptance_criteria or '') if form else '' }}</textarea>
         <div class="hint">One per line. Lines starting with <code>-</code> or bullets are fine.</div>
     </label>
+    {% endif %}
 
+    {% if using_ai %}
     <label>
         Suggested steps
         <textarea name="suggested_steps"
                   placeholder="- Review current implementation in ...&#10;- Add tests for ...">{{ (form.suggested_steps or '') if form else '' }}</textarea>
         <div class="hint">One step per line. This is what Bob/Chad can follow later.</div>
     </label>
+    {% endif %}
 
+    {% if using_ai %}
     <label>
         Safe Paths (one per line)
-        <textarea name="safe_paths" id="safe_paths" rows="5"
+        <textarea name="safe_paths" rows="5"
                   placeholder="ui/chat_ui.html&#10;static/css/chat.css"
                   class="form-control">{{ form.safe_paths if form.safe_paths else "" }}</textarea>
-        <div class="hint">One step per line. The paths that can be changed</div>
+        <div class="hint">Paths inside the repo that Bob/Chad are allowed to edit.</div>
     </label>
+     {% endif %}
 
     <div class="actions">
         <button type="submit">Create Ticket</button>
