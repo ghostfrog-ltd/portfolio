@@ -13,6 +13,10 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
+#meta
+from meta.web import meta_bp
+app.register_blueprint(meta_bp)
+
 # 📦 Register Translator Blueprint
 from Projects.Translator.translator_app import translator_bp
 app.register_blueprint(translator_bp)
