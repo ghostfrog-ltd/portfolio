@@ -43,7 +43,6 @@ if _data_root_env:
 else:
     DATA_DIR = ROOT_DIR / "data"
 
-DATA_DIR = ROOT_DIR / "data"
 META_DIR = DATA_DIR / "meta"
 HISTORY_FILE = META_DIR / "history.jsonl"
 TICKETS_DIR = META_DIR / "tickets"
