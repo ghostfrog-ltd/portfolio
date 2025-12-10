@@ -1,0 +1,72 @@
+<!-- meta_upload.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Upload Meta Tickets</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 2rem;
+      background: #050810;
+      color: #e5e7eb;
+    }
+    a { color: #38bdf8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    label { display:block; margin-top:1rem; font-weight:500; }
+    input[type="file"] {
+      margin-top:0.5rem;
+    }
+    button {
+      margin-top:1rem;
+      padding:0.5rem 1rem;
+      border-radius:0.5rem;
+      border:none;
+      cursor:pointer;
+      background:#22c55e;
+      color:#020617;
+      font-weight:600;
+    }
+    button:hover { background:#4ade80; }
+    .results {
+      margin-top:2rem;
+      padding:1rem;
+      border-radius:0.5rem;
+      background:#020617;
+      border:1px solid #1f2937;
+    }
+    .result-ok { color:#22c55e; }
+    .result-error { color:#f97316; }
+  </style>
+</head>
+<body>
+  <p><a href="/meta">← Back to tickets</a></p>
+
+  <h1>Upload Meta Ticket JSON</h1>
+  <p>You can upload one or more <code>.json</code> files. They’ll be saved into <code>data/meta/tickets/</code> on this server.</p>
+
+  {% if error %}
+    <p style="color:#f97316;">{{ error }}</p>
+  {% endif %}
+
+  <form action="{{ url_for('meta.upload_ticket_post') }}" method="POST" enctype="multipart/form-data">
+    <label for="ticket_files">Ticket JSON files</label>
+    <input id="ticket_files" name="ticket_files" type="file" accept=".json" multiple>
+
+    <button type="submit">Upload</button>
+  </form>
+
+  {% if results %}
+    <div class="results">
+      <h2>Upload results</h2>
+      <ul>
+        {% for r in results %}
+          <li class="result-{{ r.status }}">
+            <strong>{{ r.filename }}</strong> – {{ r.message }}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+</body>
+</html>

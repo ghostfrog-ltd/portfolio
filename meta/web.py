@@ -9,6 +9,12 @@ import subprocess
 from datetime import datetime, timezone
 
 from markupsafe import Markup
+
+try:
+    from werkzeug.utils import secure_filename
+except ImportError:
+    from werkzeug.security import secure_filename
+
 try:
     from markdown import markdown as md
 except ImportError:
@@ -16,6 +22,8 @@ except ImportError:
         return text
 
 from meta.core import TICKETS_DIR
+
+from meta.core import ROOT_DIR as BASE_DIR
 
 USING_AI = False
 
@@ -37,6 +45,7 @@ meta_bp = Blueprint(
     template_folder="templates",  # 👈 relative to the meta package
 )
 
+
 @meta_bp.app_template_filter("markdown")
 def markdown_filter(text: str) -> Markup:
     """
@@ -51,16 +60,22 @@ def markdown_filter(text: str) -> Markup:
     )
     return Markup(html)
 
-# Assume this file is in project_root/bob/meta_web.py
-BASE_DIR = Path(__file__).resolve().parents[1]  # project root
+
+ALLOWED_EXTENSIONS = {".json"}  # 👈 only allow JSON uploads
+
+
+def allowed_file(filename: str) -> bool:
+    return Path(filename).suffix.lower() in ALLOWED_EXTENSIONS
+
 
 # ----------------- helpers -----------------
 
 from collections import defaultdict
 from typing import DefaultDict, Tuple
 
+
 def load_tickets_with_hierarchy(
-    tickets: List[Dict[str, Any]],
+        tickets: List[Dict[str, Any]],
 ) -> Tuple[List[Dict[str, Any]], DefaultDict[str, List[Dict[str, Any]]]]:
     """
     Given a list of tickets, return:
@@ -180,6 +195,66 @@ def get_ticket_by_id(ticket_id: str) -> Optional[Dict[str, Any]]:
 
 # ----------------- routes -----------------
 
+@meta_bp.route("/upload", methods=["GET"])
+def upload_ticket_form():
+    """Show the upload form."""
+    return render_template("meta_upload.html")
+
+
+@meta_bp.route("/upload", methods=["POST"])
+def upload_ticket_post():
+    """Handle one or more uploaded ticket JSON files."""
+    files = request.files.getlist("ticket_files")
+
+    if not files:
+        return render_template(
+            "meta_upload.html",
+            error="No files selected.",
+            results=[],
+        )
+
+    results = []
+
+    for f in files:
+        filename = f.filename.strip()
+        if not filename:
+            continue
+
+        if not allowed_file(filename):
+            results.append({
+                "filename": filename,
+                "status": "error",
+                "message": "Only .json files are allowed.",
+            })
+            continue
+
+        safe_name = secure_filename(filename)
+        dest_path = TICKETS_DIR / safe_name
+
+        try:
+            # Optional validation: ensure it parses as JSON
+            data = json.load(f)  # this advances file pointer
+            # Rewind and save the raw data to disk
+            dest_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+            results.append({
+                "filename": safe_name,
+                "status": "ok",
+                "message": f"Uploaded to {dest_path.relative_to(BASE_DIR)}",
+            })
+        except Exception as e:
+            results.append({
+                "filename": safe_name,
+                "status": "error",
+                "message": f"Failed to save: {e}",
+            })
+
+    return render_template(
+        "meta_upload.html",
+        error=None,
+        results=results,
+    )
+
 
 @meta_bp.route("/<ticket_id>/run", methods=["POST"])
 def run_ticket(ticket_id: str):
@@ -244,7 +319,7 @@ def delete_ticket(ticket_id):
             pass
 
     # If it doesn't exist, just bounce back to index anyway
-    return redirect(url_for("meta.meta_index") + "?status=all" )
+    return redirect(url_for("meta.meta_index") + "?status=all")
 
 
 @meta_bp.route("/<ticket_id>/edit", methods=["GET", "POST"])
@@ -332,9 +407,9 @@ def edit_ticket(ticket_id: str):
         "acceptance_criteria": "\n".join(ticket.get("evidence") or []),
         "suggested_steps": "\n".join(ticket.get("suggested_steps") or []),
         "safe_paths": "\n".join(ticket.get("safe_paths") or []),
-        "kind": ticket.get("kind",""),
+        "kind": ticket.get("kind", ""),
         "category": ticket.get("category", ""),
-        "parent_id": ticket.get("parent_id", ""),   # 👈 so template can preselect
+        "parent_id": ticket.get("parent_id", ""),  # 👈 so template can preselect
     }
 
     # All tickets for the parent dropdown (template hides self)
@@ -349,7 +424,6 @@ def edit_ticket(ticket_id: str):
         using_ai=USING_AI,
         all_tickets=all_tickets,
     )
-
 
 
 @meta_bp.route("/new", methods=["GET", "POST"])
@@ -497,7 +571,7 @@ def meta_index():
 
     return render_template(
         "meta_index.html",
-        tickets=top_level,                 # 👈 only parents / top-level
+        tickets=top_level,  # 👈 only parents / top-level
         children_by_parent=children_by_parent,  # 👈 mapping parent_id -> [children]
         current_status=status,
         current_category=category,
