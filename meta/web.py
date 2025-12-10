@@ -1,4 +1,4 @@
-# bob/meta_web.py
+# meta/web.py
 
 from flask import Blueprint, render_template, abort, request, redirect, url_for, jsonify
 import json
