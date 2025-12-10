@@ -35,6 +35,56 @@ BASE_DIR = Path(__file__).resolve().parents[1]  # project root
 
 # ----------------- helpers -----------------
 
+from collections import defaultdict
+from typing import DefaultDict, Tuple
+
+def load_tickets_with_hierarchy(
+    tickets: List[Dict[str, Any]],
+) -> Tuple[List[Dict[str, Any]], DefaultDict[str, List[Dict[str, Any]]]]:
+    """
+    Given a list of tickets, return:
+      - top_level_tickets: tickets with no valid parent in this list
+      - children_by_parent_id: map[parent_id] -> [child_ticket, ...]
+    """
+
+    if not tickets:
+        return [], defaultdict(list)
+
+    # Map of ticket_id -> ticket for quick lookup
+    by_id: Dict[str, Dict[str, Any]] = {
+        t.get("ticket_id", ""): t for t in tickets if t.get("ticket_id")
+    }
+
+    children_by_parent: DefaultDict[str, List[Dict[str, Any]]] = defaultdict(list)
+
+    # assign children to parents (only within this filtered set)
+    for t in tickets:
+        parent_id = (t.get("parent_id") or "").strip()
+        if parent_id and parent_id in by_id:
+            children_by_parent[parent_id].append(t)
+
+    # top-level tickets = those with no parent_id OR parent_id not found in this filtered set
+    top_level: List[Dict[str, Any]] = []
+    for t in tickets:
+        parent_id = (t.get("parent_id") or "").strip()
+        if not parent_id or parent_id not in by_id:
+            top_level.append(t)
+
+    # sorting helper
+    def created_at_key(ticket: Dict[str, Any]) -> str:
+        # adjust if you store created_at differently
+        return ticket.get("created_at", "") or ""
+
+    # parents: newest first
+    top_level.sort(key=created_at_key, reverse=True)
+
+    # children: oldest first under each parent
+    for child_list in children_by_parent.values():
+        child_list.sort(key=created_at_key)
+
+    return top_level, children_by_parent
+
+
 def generate_manual_ticket_id() -> str:
     """Generate a manual ticket_id like MANUAL-db3102a1."""
     return f"MANUAL-{uuid4().hex[:8]}"
@@ -200,17 +250,21 @@ def edit_ticket(ticket_id: str):
         steps_raw = request.form.get("suggested_steps") or ""
         safe_paths_raw = request.form.get("safe_paths") or ""
         kind = (request.form.get("kind") or "self_improvement").strip()
+        parent_id = (request.form.get("parent_id") or "").strip() or None  # 👈 NEW
 
         if not title:
             # Re-render form with error + posted data
             form = dict(request.form)
             form.setdefault("safe_paths", safe_paths_raw)
+            all_tickets = list_all_tickets()
             return render_template(
                 "meta_new.html",  # reuse same template
                 error="Title is required.",
                 form=form,
                 ticket=ticket,
                 edit_mode=True,
+                using_ai=USING_AI,
+                all_tickets=all_tickets,
             )
 
         evidence = _split_lines(acceptance_raw)
@@ -234,6 +288,12 @@ def edit_ticket(ticket_id: str):
         ticket["kind"] = kind
         ticket["category"] = category
 
+        # parent relationship
+        if parent_id:
+            ticket["parent_id"] = parent_id
+        else:
+            ticket.pop("parent_id", None)  # remove if cleared
+
         # Keep id/ticket_id/created_at/kind/status as-is
         path = TICKETS_DIR / f"{ticket_id}.json"
         TICKETS_DIR.mkdir(parents=True, exist_ok=True)
@@ -251,8 +311,13 @@ def edit_ticket(ticket_id: str):
         "acceptance_criteria": "\n".join(ticket.get("evidence") or []),
         "suggested_steps": "\n".join(ticket.get("suggested_steps") or []),
         "safe_paths": "\n".join(ticket.get("safe_paths") or []),
-        "kind": ticket.get("kind","")
+        "kind": ticket.get("kind",""),
+        "category": ticket.get("category", ""),
+        "parent_id": ticket.get("parent_id", ""),   # 👈 so template can preselect
     }
+
+    # All tickets for the parent dropdown (template hides self)
+    all_tickets = list_all_tickets()
 
     return render_template(
         "meta_new.html",  # reuse same template
@@ -260,8 +325,10 @@ def edit_ticket(ticket_id: str):
         form=form,
         ticket=ticket,
         edit_mode=True,
-        using_ai=USING_AI
+        using_ai=USING_AI,
+        all_tickets=all_tickets,
     )
+
 
 
 @meta_bp.route("/new", methods=["GET", "POST"])
@@ -274,12 +341,18 @@ def new_ticket():
         category = (request.form.get("category") or "general").strip()
         acceptance_raw = request.form.get("acceptance_criteria") or ""
         steps_raw = request.form.get("suggested_steps") or ""
+        parent_id = (request.form.get("parent_id") or "").strip() or None  # 👈 NEW
 
         if not title:
+            all_tickets = list_all_tickets()
             return render_template(
                 "meta_new.html",
                 error="Title is required.",
                 form=request.form,
+                using_ai=USING_AI,
+                all_tickets=all_tickets,
+                ticket=None,
+                edit_mode=False,
             )
 
         def _split_lines(block: str) -> list[str]:
@@ -326,8 +399,11 @@ def new_ticket():
             "last_run": None,
             "last_bob_reply": None,
             "last_chad_summary": None,
-            "category": category,  # 👈 NEW
+            "category": category,  # existing
         }
+
+        if parent_id:
+            ticket["parent_id"] = parent_id  # 👈 NEW
 
         TICKETS_DIR.mkdir(parents=True, exist_ok=True)
         path = TICKETS_DIR / f"{ticket_id}.json"
@@ -337,7 +413,16 @@ def new_ticket():
         return redirect(url_for("meta.meta_detail", ticket_id=ticket_id))
 
     # GET
-    return render_template("meta_new.html", error=None, form={}, using_ai=USING_AI)
+    all_tickets = list_all_tickets()
+    return render_template(
+        "meta_new.html",
+        error=None,
+        form={},
+        using_ai=USING_AI,
+        all_tickets=all_tickets,
+        ticket=None,
+        edit_mode=False,
+    )
 
 
 @meta_bp.route("/")
@@ -345,22 +430,32 @@ def meta_index():
     """
     Index page listing meta tickets, with optional status + category filter.
     /meta?status=open|done|all&category=foo|all
+
+    Now rendered as:
+      PARENT
+          child
+          child
+      NEXT PARENT
+          child
     """
 
     status = request.args.get("status", "open")  # default: open
     category = request.args.get("category", "all")
 
-    # Load all tickets once
-    tickets = list_all_tickets()
+    # Load all tickets once (for filtering + categories)
+    all_tickets = list_all_tickets()
 
-    # Build list of available categories from all tickets
+    # Build list of available categories from ALL tickets (even if filtered out)
     categories = sorted(
         {
             t.get("category")
-            for t in tickets
+            for t in all_tickets
             if t.get("category")
         }
     )
+
+    # Start from all tickets, then apply filters
+    tickets = all_tickets
 
     # Filter by status
     if status in {"open", "done"}:
@@ -376,9 +471,13 @@ def meta_index():
             if t.get("category") == category
         ]
 
+    # Build parent/child structure from the FILTERED tickets
+    top_level, children_by_parent = load_tickets_with_hierarchy(tickets)
+
     return render_template(
         "meta_index.html",
-        tickets=tickets,
+        tickets=top_level,                 # 👈 only parents / top-level
+        children_by_parent=children_by_parent,  # 👈 mapping parent_id -> [children]
         current_status=status,
         current_category=category,
         categories=categories,

@@ -18,6 +18,16 @@
           align-items: baseline;
           gap: 1rem;
         }
+        /* parent row */
+        .ticket-parent {
+          /* slightly stronger look if you want */
+        }
+        /* child row: visually inset */
+        .ticket-child {
+          margin-left: 2rem;
+          background: #020617;
+          opacity: 0.95;
+        }
         .ticket-meta { font-size: 0.8rem; color: #9ca3af; }
         .filter-bar {
           display: flex;
@@ -26,6 +36,13 @@
           gap: 1rem;
           margin-bottom: 1rem;
           flex-wrap: wrap;
+        }
+        .badge {
+          display:inline-block;
+          padding:0.1rem 0.4rem;
+          border-radius:0.4rem;
+          border:1px solid transparent;
+          font-size:0.75rem;
         }
     </style>
 </head>
@@ -87,11 +104,12 @@
 
 {% if tickets %}
 <div class="ticket-list">
+    {# tickets = top-level only; children_by_parent provided by view #}
     {% for t in tickets %}
-    <div class="ticket-card">
+    <div class="ticket-card ticket-parent">
         <div>
             <a href="{{ url_for('meta.meta_detail', ticket_id=t.ticket_id) }}">
-                {{ t.ticket_id }} – {{ t.title }}
+                {{ t.ticket_id }} – {{ t.title or t.summary }}
             </a>
             <div class="ticket-meta">
                 {{ t.component or t.area or 'unknown component' }} ·
@@ -113,6 +131,38 @@
             </div>
         </div>
     </div>
+
+    {# children inset under this parent #}
+    {% set kids = children_by_parent.get(t.ticket_id, []) %}
+    {% if kids %}
+        {% for child in kids %}
+        <div class="ticket-card ticket-child">
+            <div>
+                <a href="{{ url_for('meta.meta_detail', ticket_id=child.ticket_id) }}">
+                    {{ child.ticket_id }} – {{ child.title or child.summary }}
+                </a>
+                <div class="ticket-meta">
+                    {{ child.component or child.area or 'unknown component' }} ·
+                    priority: {{ child.priority or 'unknown' }} ·
+
+                    {% if child.category %}
+                    category: {{ child.category }} ·
+                    {% endif %}
+
+                    {% if child.status == 'done' %}
+                    <span class="badge" style="background:#14532d;border-color:#166534;">✔ Done</span>
+                    {% else %}
+                    <span class="badge" style="background:#451a03;border-color:#7c2d12;">Open</span>
+                    {% endif %}
+
+                    {% if child.last_result %}
+                    · last run: {{ child.last_result }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
     {% endfor %}
 </div>
 {% else %}

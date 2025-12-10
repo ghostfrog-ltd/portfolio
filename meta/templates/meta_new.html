@@ -88,6 +88,41 @@
         <div class="hint">Used for filtering tickets on the index page.</div>
     </label>
 
+    {# Parent ticket selector #}
+    {% set parent_value = '' %}
+    {% if form and form.parent_id %}
+        {% set parent_value = form.parent_id %}
+    {% elif ticket and ticket.parent_id %}
+        {% set parent_value = ticket.parent_id %}
+    {% endif %}
+
+    <label>
+        Parent ticket (optional)
+        <select name="parent_id">
+            <option value="">None</option>
+
+            {% if all_tickets %}
+                {% for t in all_tickets %}
+
+                    {# Only show REAL parents (tickets with no parent_id) #}
+                    {% if not t.parent_id %}
+
+                        {# Don't allow a ticket to be its own parent when editing #}
+                        {% if not ticket or t.ticket_id != ticket.ticket_id %}
+                        <option value="{{ t.ticket_id }}"
+                            {% if parent_value == t.ticket_id %}selected{% endif %}>
+                            {{ t.ticket_id }} – {{ t.title or t.summary }}
+                        </option>
+                        {% endif %}
+
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </select>
+
+        <div class="hint">Choose a parent ticket to group this under. Only top-level tickets appear here.</div>
+    </label>
+
     {% if using_ai %}
     <label>
         Kind
