@@ -10,8 +10,8 @@ openai==1.109.1
 requests==2.32.4
 python-dotenv==1.1.0
 
-# ---- Blog rendering (Markdown posts) ----
-Markdown==3.10
+# ---- Blog rendering + meta ticket Markdown ----
+Markdown==3.10     # used for blog posts AND meta ticket markdown rendering
 markdownify==1.2.2
 
 # ---- Optional: Postgres (keep for future DB support) ----
