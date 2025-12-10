@@ -20,48 +20,78 @@
         h2 { margin-top: 1.5rem; }
         ul { padding-left: 1.25rem; }
         code { background: #111827; padding: 0.1rem 0.25rem; border-radius: 0.25rem; }
+        .container{max-width: 930px;margin: auto;}
+        .summary-body h1,
+.summary-body h2,
+.summary-body h3 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.summary-body p {
+    margin: 0.25rem 0;
+}
+
+.summary-body code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    background: #020617;
+    padding: 0.1rem 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.summary-body pre {
+    background: #020617;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+}
     </style>
 </head>
 <body>
-<p><a href="{{ url_for('meta.meta_index') }}">← Back to tickets</a></p>
 
-<h1>{{ ticket.title }}</h1>
+<div class="container">
 
-<div>
-    <span class="badge">ID: {{ ticket.ticket_id }}</span>
-    {% if ticket.priority %}
+    <p><a href="{{ url_for('meta.meta_index') }}">← Back to tickets</a></p>
+
+    <h1>{{ ticket.title }}</h1>
+
+    <div>
+        <span class="badge">ID: {{ ticket.ticket_id }}</span>
+        {% if ticket.priority %}
         <span class="badge">priority: {{ ticket.priority }}</span>
-    {% endif %}
-    {% if ticket.component or ticket.area %}
+        {% endif %}
+        {% if ticket.component or ticket.area %}
         <span class="badge">component: {{ ticket.component or ticket.area }}</span>
-    {% endif %}
-    {% if ticket.kind %}
+        {% endif %}
+        {% if ticket.kind %}
         <span class="badge">kind: {{ ticket.kind }}</span>
-    {% endif %}
-    {% if ticket.category %}
+        {% endif %}
+        {% if ticket.category %}
         <span class="badge">category: {{ ticket.category }}</span>
+        {% endif %}
+    </div>
+
+    {% if ticket.category %}
+    <p style="margin-top:0.4rem; font-size:0.8rem; color:#9ca3af;">
+        View all tickets in
+        <a href="{{ url_for('meta.meta_index', status='all', category=ticket.category) }}">
+            category “{{ ticket.category }}”
+        </a>.
+    </p>
     {% endif %}
-</div>
 
-{% if ticket.category %}
-<p style="margin-top:0.4rem; font-size:0.8rem; color:#9ca3af;">
-    View all tickets in
-    <a href="{{ url_for('meta.meta_index', status='all', category=ticket.category) }}">
-        category “{{ ticket.category }}”
-    </a>.
-</p>
-{% endif %}
-
-{% if using_ai %}
+    {% if using_ai %}
     {% if ticket.last_run_at %}
     <p class="ticket-meta">
         Last run: {{ ticket.last_run_at }}
         {% if ticket.last_result %} ({{ ticket.last_result }}){% endif %}
     </p>
     {% endif %}
-{% endif %}
+    {% endif %}
 
-{% if using_ai %}
+    {% if using_ai %}
     {% if ticket.last_exec_message %}
     <h2>Last Run Output</h2>
     <pre style="background:#020617;border-radius:0.5rem;padding:0.75rem;
@@ -69,9 +99,9 @@
     {{ ticket.last_exec_message }}
       </pre>
     {% endif %}
-{% endif %}
+    {% endif %}
 
-{% if using_ai %}
+    {% if using_ai %}
     {% if ticket.last_error %}
     <h2>Last Error (pytest)</h2>
     <pre style="background:#020617;border-radius:0.5rem;padding:0.75rem;
@@ -79,54 +109,54 @@
     {{ ticket.last_error }}
       </pre>
     {% endif %}
-{% endif %}
-
-
-{% if ticket.status == 'done' %}
-<div style="margin-top:1rem; display:flex; gap:0.5rem; align-items:center;">
-    <div style="padding:0.4rem 0.8rem;
-                background:#14532d;border:1px solid #166534;
-                border-radius:0.4rem;">
-        ✔ This ticket is completed
-    </div>
-    <form action="{{ url_for('meta.reopen_ticket', ticket_id=ticket.ticket_id) }}"
-          method="post">
-        <button type="submit"
-                style="background:#111827;color:#e5e7eb;padding:0.4rem 0.8rem;
-               border-radius:0.4rem;border:1px solid #4b5563;cursor:pointer;">
-            ↩ Reopen Ticket
-        </button>
-    </form>
-</div>
-{% else %}
-<div style="margin-top:1rem; display:flex; gap:0.5rem; align-items:center;">
-    {% if using_ai == True %}
-    <form action="{{ url_for('meta.run_ticket', ticket_id=ticket.ticket_id) }}"
-          method="post">
-        <button type="submit"
-                style="background:#2563eb;color:#fff;padding:0.4rem 0.8rem;
-               border-radius:0.4rem;border:1px solid #1d4ed8;cursor:pointer;">
-            ▶ Run Ticket with Bob/Chad
-            {% else %}
-        </button>
-    </form>
     {% endif %}
 
-    <form action="{{ url_for('meta.mark_ticket_complete', ticket_id=ticket.ticket_id) }}"
-          method="post">
-        <button type="submit"
-                style="background:#14532d;color:#fff;padding:0.4rem 0.8rem;
+
+    {% if ticket.status == 'done' %}
+    <div style="margin-top:1rem; display:flex; gap:0.5rem; align-items:center;">
+        <div style="padding:0.4rem 0.8rem;
+                background:#14532d;border:1px solid #166534;
+                border-radius:0.4rem;">
+            ✔ This ticket is completed
+        </div>
+        <form action="{{ url_for('meta.reopen_ticket', ticket_id=ticket.ticket_id) }}"
+              method="post">
+            <button type="submit"
+                    style="background:#111827;color:#e5e7eb;padding:0.4rem 0.8rem;
+               border-radius:0.4rem;border:1px solid #4b5563;cursor:pointer;">
+                ↩ Reopen Ticket
+            </button>
+        </form>
+    </div>
+    {% else %}
+    <div style="margin-top:1rem; display:flex; gap:0.5rem; align-items:center;">
+        {% if using_ai == True %}
+        <form action="{{ url_for('meta.run_ticket', ticket_id=ticket.ticket_id) }}"
+              method="post">
+            <button type="submit"
+                    style="background:#2563eb;color:#fff;padding:0.4rem 0.8rem;
+               border-radius:0.4rem;border:1px solid #1d4ed8;cursor:pointer;">
+                ▶ Run Ticket with Bob/Chad
+                {% else %}
+            </button>
+        </form>
+        {% endif %}
+
+        <form action="{{ url_for('meta.mark_ticket_complete', ticket_id=ticket.ticket_id) }}"
+              method="post">
+            <button type="submit"
+                    style="background:#14532d;color:#fff;padding:0.4rem 0.8rem;
                border-radius:0.4rem;border:1px solid #166534;cursor:pointer;">
-            ✔ Mark as Completed
-        </button>
-    </form>
-</div>
-{% endif %}
+                ✔ Mark as Completed
+            </button>
+        </form>
+    </div>
+    {% endif %}
 
-<div style="margin-top:1rem; display:flex; gap:0.5rem; align-items:center;">
+    <div style="margin-top:1rem; display:flex; gap:0.5rem; align-items:center;">
 
-    <form method="get" action="{{ url_for('meta.edit_ticket', ticket_id=ticket.ticket_id) }}">
-        <button type="submit" style="
+        <form method="get" action="{{ url_for('meta.edit_ticket', ticket_id=ticket.ticket_id) }}">
+            <button type="submit" style="
             background: #14532d;
             color: #fff;
             padding: 0.4rem 0.8rem;
@@ -134,13 +164,13 @@
             border: 1px solid #166534;
             cursor: pointer;
         ">Edit ticket
-        </button>
-    </form>
+            </button>
+        </form>
 
-    <form method="post"
-          action="{{ url_for('meta.delete_ticket', ticket_id=ticket.ticket_id) }}"
-          style="display:inline">
-        <button style="
+        <form method="post"
+              action="{{ url_for('meta.delete_ticket', ticket_id=ticket.ticket_id) }}"
+              style="display:inline">
+            <button style="
             background: #14532d;
             color: #fff;
             padding: 0.4rem 0.8rem;
@@ -148,65 +178,69 @@
             border: 1px solid #166534;
             cursor: pointer;
         " type="submit"
-                onclick="return confirm('Delete ticket {{ ticket.ticket_id }}?');">
-            🗑Delete
-        </button>
-    </form>
+                    onclick="return confirm('Delete ticket {{ ticket.ticket_id }}?');">
+                🗑Delete
+            </button>
+        </form>
 
-</div>
+    </div>
 
-{% if ticket.summary %}
-<h2>Summary</h2>
-<p>{{ ticket.summary | replace('\n', '<br>') | safe }}</p>
-{% endif %}
+    {% if ticket.summary %}
+    <h2>Summary</h2>
+    <div class="summary-body">
+        {{ ticket.summary | markdown }}
+    </div>
+    {% endif %}
 
-{% if ticket.acceptance_criteria %}
-<h2>Acceptance Criteria</h2>
-<ul>
-    {% for item in ticket.acceptance_criteria %}
-    <li>{{ item }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
+    {% if ticket.acceptance_criteria %}
+    <h2>Acceptance Criteria</h2>
+    <ul>
+        {% for item in ticket.acceptance_criteria %}
+        <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 
-{% if ticket.suggested_steps %}
-<h2>Suggested Steps</h2>
-<ol>
-    {% for step in ticket.suggested_steps %}
-    <li>{{ step }}</li>
-    {% endfor %}
-</ol>
-{% endif %}
+    {% if ticket.suggested_steps %}
+    <h2>Suggested Steps</h2>
+    <ol>
+        {% for step in ticket.suggested_steps %}
+        <li>{{ step }}</li>
+        {% endfor %}
+    </ol>
+    {% endif %}
 
-{% if ticket.safe_paths %}
-<h2>Safe Paths</h2>
-<ol>
-    {% for path in ticket.safe_paths %}
-    <li>{{ path }}</li>
-    {% endfor %}
-</ol>
-{% endif %}
+    {% if ticket.safe_paths %}
+    <h2>Safe Paths</h2>
+    <ol>
+        {% for path in ticket.safe_paths %}
+        <li>{{ path }}</li>
+        {% endfor %}
+    </ol>
+    {% endif %}
 
-{% if ticket.raw %}
-<h2>Raw</h2>
-<pre>{{ ticket | tojson(indent=2) }}</pre>
-{% endif %}
+    {% if ticket.raw %}
+    <h2>Raw</h2>
+    <pre>{{ ticket | tojson(indent=2) }}</pre>
+    {% endif %}
 
-{% if ticket.last_bob_reply %}
-<hr>
-<h2>Last Bob reply</h2>
-<pre style="white-space: pre-wrap; font-family: monospace;">
+    {% if ticket.last_bob_reply %}
+    <hr>
+    <h2>Last Bob reply</h2>
+    <pre style="white-space: pre-wrap; font-family: monospace;">
 {{ ticket.last_bob_reply }}
   </pre>
-{% endif %}
+    {% endif %}
 
-{% if ticket.last_chad_summary %}
-<hr>
-<h2>Last Chad summary</h2>
-<pre style="white-space: pre-wrap; font-family: monospace;">
+    {% if ticket.last_chad_summary %}
+    <hr>
+    <h2>Last Chad summary</h2>
+    <pre style="white-space: pre-wrap; font-family: monospace;">
 {{ ticket.last_chad_summary }}
   </pre>
-{% endif %}
+    {% endif %}
+
+</div>
 
 </body>
 </html>

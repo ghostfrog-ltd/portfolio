@@ -8,7 +8,14 @@ from uuid import uuid4
 import subprocess
 from datetime import datetime, timezone
 
-from meta.core import TICKETS_DIR  # 👈 NEW
+from markupsafe import Markup
+try:
+    from markdown import markdown as md
+except ImportError:
+    def md(text, **kwargs):
+        return text
+
+from meta.core import TICKETS_DIR
 
 USING_AI = False
 
@@ -29,6 +36,20 @@ meta_bp = Blueprint(
     url_prefix="/meta",
     template_folder="templates",  # 👈 relative to the meta package
 )
+
+@meta_bp.app_template_filter("markdown")
+def markdown_filter(text: str) -> Markup:
+    """
+    Render Markdown to safe HTML for templates.
+    """
+    if not text:
+        return Markup("")
+    html = md(
+        text,
+        extensions=["fenced_code", "tables", "sane_lists"],
+        output_format="html5",
+    )
+    return Markup(html)
 
 # Assume this file is in project_root/bob/meta_web.py
 BASE_DIR = Path(__file__).resolve().parents[1]  # project root

@@ -44,15 +44,19 @@
           border:1px solid transparent;
           font-size:0.75rem;
         }
+        .container{max-width: 930px;margin: auto;}
     </style>
 </head>
 <body>
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-    <h1 style="margin:0;">Meta Tickets</h1>
+<div class="container">
 
-    <a href="{{ url_for('meta.new_ticket') }}"
-       style="
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h1 style="margin:0;">Meta Tickets</h1>
+
+        <a href="{{ url_for('meta.new_ticket') }}"
+           style="
        background:#2563eb;
        border:1px solid #1d4ed8;
        color:#fff;
@@ -61,80 +65,82 @@
        font-size:0.9rem;
        text-decoration:none;
      ">
-        + New Ticket
-    </a>
-</div>
-
-<div class="filter-bar">
-    <!-- Status filter -->
-    <p style="margin:0;">
-        Status:
-        <a href="{{ url_for('meta.meta_index', status='open', category=current_category) }}"
-           style="{{ 'font-weight:bold;' if current_status == 'open' else '' }}">
-            Open
-        </a> ·
-        <a href="{{ url_for('meta.meta_index', status='done', category=current_category) }}"
-           style="{{ 'font-weight:bold;' if current_status == 'done' else '' }}">
-            Done
-        </a> ·
-        <a href="{{ url_for('meta.meta_index', status='all', category=current_category) }}"
-           style="{{ 'font-weight:bold;' if current_status == 'all' else '' }}">
-            All
+            + New Ticket
         </a>
-    </p>
-
-    <!-- Category filter -->
-    <form method="get" action="{{ url_for('meta.meta_index') }}" style="margin:0;">
-        <input type="hidden" name="status" value="{{ current_status }}">
-        <label for="category-select" style="font-size:0.9rem; margin-right:0.25rem;">Category:</label>
-        <select id="category-select" name="category"
-                onchange="this.form.submit()"
-                style="background:#020617;border:1px solid #1f2937;color:#e5e7eb;border-radius:0.4rem;padding:0.25rem 0.5rem;font-size:0.9rem;">
-            <option value="all" {{ 'selected' if current_category == 'all' else '' }}>
-                All
-            </option>
-            {% for cat in categories %}
-            <option value="{{ cat }}" {{ 'selected' if current_category == cat else '' }}>
-                {{ cat }}
-            </option>
-            {% endfor %}
-        </select>
-    </form>
-</div>
-
-{% if tickets %}
-<div class="ticket-list">
-    {# tickets = top-level only; children_by_parent provided by view #}
-    {% for t in tickets %}
-    <div class="ticket-card ticket-parent">
-        <div>
-            <a href="{{ url_for('meta.meta_detail', ticket_id=t.ticket_id) }}">
-                {{ t.ticket_id }} – {{ t.title or t.summary }}
-            </a>
-            <div class="ticket-meta">
-                {{ t.component or t.area or 'unknown component' }} ·
-                priority: {{ t.priority or 'unknown' }} ·
-
-                {% if t.category %}
-                category: {{ t.category }} ·
-                {% endif %}
-
-                {% if t.status == 'done' %}
-                <span class="badge" style="background:#14532d;border-color:#166534;">✔ Done</span>
-                {% else %}
-                <span class="badge" style="background:#451a03;border-color:#7c2d12;">Open</span>
-                {% endif %}
-
-                {% if t.last_result %}
-                · last run: {{ t.last_result }}
-                {% endif %}
-            </div>
-        </div>
     </div>
 
-    {# children inset under this parent #}
-    {% set kids = children_by_parent.get(t.ticket_id, []) %}
-    {% if kids %}
+    <div class="filter-bar">
+        <!-- Status filter -->
+        <p style="margin:0;">
+            Status:
+            <a href="{{ url_for('meta.meta_index', status='open', category=current_category) }}"
+               style="{{ 'font-weight:bold;' if current_status == 'open' else '' }}">
+                Open
+            </a> ·
+            <a href="{{ url_for('meta.meta_index', status='done', category=current_category) }}"
+               style="{{ 'font-weight:bold;' if current_status == 'done' else '' }}">
+                Done
+            </a> ·
+            <a href="{{ url_for('meta.meta_index', status='all', category=current_category) }}"
+               style="{{ 'font-weight:bold;' if current_status == 'all' else '' }}">
+                All
+            </a>
+        </p>
+
+        <!-- Category filter -->
+        <form method="get" action="{{ url_for('meta.meta_index') }}" style="margin:0;">
+            <input type="hidden" name="status" value="{{ current_status }}">
+            <label for="category-select" style="font-size:0.9rem; margin-right:0.25rem;">Category:</label>
+            <select id="category-select" name="category"
+                    onchange="this.form.submit()"
+                    style="background:#020617;border:1px solid #1f2937;color:#e5e7eb;border-radius:0.4rem;padding:0.25rem 0.5rem;font-size:0.9rem;">
+                <option value="all" {{
+                'selected' if current_category == 'all' else '' }}>
+                All
+                </option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {{
+                'selected' if current_category == cat else '' }}>
+                {{ cat }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    {% if tickets %}
+    <div class="ticket-list">
+        {# tickets = top-level only; children_by_parent provided by view #}
+        {% for t in tickets %}
+        <div class="ticket-card ticket-parent">
+            <div>
+                <a href="{{ url_for('meta.meta_detail', ticket_id=t.ticket_id) }}">
+                    {{ t.ticket_id }} – {{ t.title or t.summary }}
+                </a>
+                <div class="ticket-meta">
+                    {{ t.component or t.area or 'unknown component' }} ·
+                    priority: {{ t.priority or 'unknown' }} ·
+
+                    {% if t.category %}
+                    category: {{ t.category }} ·
+                    {% endif %}
+
+                    {% if t.status == 'done' %}
+                    <span class="badge" style="background:#14532d;border-color:#166534;">✔ Done</span>
+                    {% else %}
+                    <span class="badge" style="background:#451a03;border-color:#7c2d12;">Open</span>
+                    {% endif %}
+
+                    {% if t.last_result %}
+                    · last run: {{ t.last_result }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# children inset under this parent #}
+        {% set kids = children_by_parent.get(t.ticket_id, []) %}
+        {% if kids %}
         {% for child in kids %}
         <div class="ticket-card ticket-child">
             <div>
@@ -162,11 +168,14 @@
             </div>
         </div>
         {% endfor %}
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No tickets found in <code>data/meta/tickets</code>.</p>
     {% endif %}
-    {% endfor %}
+
 </div>
-{% else %}
-<p>No tickets found in <code>data/meta/tickets</code>.</p>
-{% endif %}
+
 </body>
 </html>
