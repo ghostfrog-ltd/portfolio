@@ -42,13 +42,6 @@
         }
         .hint { font-size:0.8rem; color:#9ca3af; margin-top:0.2rem; }
     </style>
-
-    <!-- TinyMCE CDN -->
-    <script
-    src="https://cdn.tiny.cloud/1/djbs8vqy9gj3dn9efa3d3pa6bjllzp2m6l4frdbw7oz198xc/tinymce/7/tinymce.min.js"
-    referrerpolicy="origin">
-    </script>
-
 </head>
 <body>
 <p><a href="{{ url_for('meta.meta_index') }}">← Back to tickets</a></p>
@@ -148,7 +141,7 @@
                   class="form-control">{{ form.safe_paths if form.safe_paths else "" }}</textarea>
         <div class="hint">Paths inside the repo that Bob/Chad are allowed to edit.</div>
     </label>
-     {% endif %}
+    {% endif %}
 
     <div class="actions">
         <button type="submit">Create Ticket</button>
@@ -156,21 +149,53 @@
 </form>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    tinymce.init({
-        selector: 'textarea[name="summary"]',
-        menubar: false,
-        statusbar: false,
-        plugins: 'lists link code',
-        toolbar: 'undo redo | bold italic underline | bullist numlist | link | removeformat | code',
-        height: 220,
-        // Dark mode to match your UI
-        skin: 'oxide-dark',
-        content_css: 'dark',
-        content_style: 'body { background-color:#020617; color:#e5e7eb; font-family:system-ui,sans-serif; font-size:14px; } a { color:#38bdf8; }'
+    document.addEventListener('DOMContentLoaded', function () {
+        tinymce.init({
+            selector: 'textarea[name="summary"]',
+            menubar: false,
+            statusbar: false,
+            plugins: 'lists link code',
+            toolbar: 'undo redo | bold italic underline | bullist numlist | link | removeformat | code',
+            height: 220,
+            // Dark mode to match your UI
+            skin: 'oxide-dark',
+            content_css: 'dark',
+            content_style: 'body { background-color:#020617; color:#e5e7eb; font-family:system-ui,sans-serif; font-size:14px; } a { color:#38bdf8; }'
+        });
     });
-});
 </script>
+
+
+<!-- Place the first <script> tag in your HTML's <head> -->
+<script src="https://cdn.tiny.cloud/1/djbs8vqy9gj3dn9efa3d3pa6bjllzp2m6l4frdbw7oz198xc/tinymce/8/tinymce.min.js"
+        referrerpolicy="origin" crossorigin="anonymous"></script>
+
+<!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+<script>
+    tinymce.init({
+       selector: 'textarea[name="summary"]',
+      plugins: [
+        // Core editing features
+        'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+        // Your account includes a free trial of TinyMCE premium features
+        // Try the most popular premium features until Dec 24, 2025:
+        'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+      ],
+      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      tinycomments_mode: 'embedded',
+      tinycomments_author: 'Author name',
+      mergetags_list: [
+        { value: 'First.Name', title: 'First Name' },
+        { value: 'Email', title: 'Email' },
+      ],
+      ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+      uploadcare_public_key: '76f94ab2679f032aa73f',
+    });
+</script>
+
+<textarea>
+  Welcome to TinyMCE!
+</textarea>
 
 </body>
 </html>
