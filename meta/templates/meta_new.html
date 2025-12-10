@@ -42,6 +42,13 @@
         }
         .hint { font-size:0.8rem; color:#9ca3af; margin-top:0.2rem; }
     </style>
+
+    <!-- TinyMCE CDN -->
+    <script
+    src="https://cdn.tiny.cloud/1/djbs8vqy9gj3dn9efa3d3pa6bjllzp2m6l4frdbw7oz198xc/tinymce/7/tinymce.min.js"
+    referrerpolicy="origin">
+    </script>
+
 </head>
 <body>
 <p><a href="{{ url_for('meta.meta_index') }}">← Back to tickets</a></p>
@@ -147,5 +154,23 @@
         <button type="submit">Create Ticket</button>
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    tinymce.init({
+        selector: 'textarea[name="summary"]',
+        menubar: false,
+        statusbar: false,
+        plugins: 'lists link code',
+        toolbar: 'undo redo | bold italic underline | bullist numlist | link | removeformat | code',
+        height: 220,
+        // Dark mode to match your UI
+        skin: 'oxide-dark',
+        content_css: 'dark',
+        content_style: 'body { background-color:#020617; color:#e5e7eb; font-family:system-ui,sans-serif; font-size:14px; } a { color:#38bdf8; }'
+    });
+});
+</script>
+
 </body>
 </html>
