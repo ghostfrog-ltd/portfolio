@@ -174,6 +174,10 @@
 <script>
     tinymce.init({
        selector: 'textarea[name="summary"]',
+        skin: 'oxide-dark',
+        content_css: 'dark',
+        content_style: 'body { background-color:#020617; color:#e5e7eb; font-family:system-ui,sans-serif; font-size:14px; } a { color:#38bdf8; }',
+
       plugins: [
         // Core editing features
         'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
@@ -193,9 +197,7 @@
     });
 </script>
 
-<textarea>
-  Welcome to TinyMCE!
-</textarea>
+
 
 </body>
 </html>
