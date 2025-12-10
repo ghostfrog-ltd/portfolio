@@ -203,7 +203,7 @@ def upload_ticket_form():
 
 @meta_bp.route("/upload", methods=["POST"])
 def upload_ticket_post():
-    """Handle one or more uploaded ticket JSON files."""
+    # Grab all files for the input named "ticket_files"
     files = request.files.getlist("ticket_files")
 
     if not files:
@@ -216,7 +216,7 @@ def upload_ticket_post():
     results = []
 
     for f in files:
-        filename = f.filename.strip()
+        filename = (f.filename or "").strip()
         if not filename:
             continue
 
@@ -232,15 +232,17 @@ def upload_ticket_post():
         dest_path = TICKETS_DIR / safe_name
 
         try:
-            # Optional validation: ensure it parses as JSON
-            data = json.load(f)  # this advances file pointer
-            # Rewind and save the raw data to disk
+            # Read and validate JSON
+            raw = f.read()
+            data = json.loads(raw.decode("utf-8"))
+
+            # Re-serialise nicely and save
             dest_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
             results.append({
                 "filename": safe_name,
                 "status": "ok",
-                "message": f"Uploaded to {dest_path.relative_to(BASE_DIR)}",
+                "message": f"Uploaded to {dest_path}",
             })
         except Exception as e:
             results.append({
@@ -254,6 +256,7 @@ def upload_ticket_post():
         error=None,
         results=results,
     )
+
 
 
 @meta_bp.route("/<ticket_id>/run", methods=["POST"])
