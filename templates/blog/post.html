@@ -1,4 +1,17 @@
 {% extends "base.html" %}
+
+{# --- SEO + OG Metadata for This Post --- #}
+{% set title = post.meta.title ~ " — GhostFrog Blog" %}
+{% set description = post.meta.summary %}
+{% set og_title = post.meta.title ~ " — GhostFrog Blog" %}
+{% set og_description = post.meta.summary %}
+{% set og_type = "article" %}
+{% set og_url = url_for('blog_post', slug=post.slug, _external=True) %}
+{% set og_image = "https://ghostfrog.co.uk/static/ghostfrog-blog-banner.png" %}
+{% set twitter_title = og_title %}
+{% set twitter_description = og_description %}
+{% set twitter_image = og_image %}
+
 {% block content %}
 <article>
   <h1>{{ post.meta.title }}</h1>

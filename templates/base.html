@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
 
     <!-- 🌐 Basic SEO -->
-    <title>{{ title or "Gary Constable — Full-Stack Developer | Python, AI & Adobe (Magento) E-Commerce" }}</title>
+    <title>{{ title or "GhostFrog — AI Agents, Automation & Real Engineering" }}</title>
     <meta name="description"
-        content="Gary Constable is a full-stack developer with 15+ years of experience building fast, scalable e-commerce and AI-powered web applications.">
+          content="{{ description or 'GhostFrog builds practical AI tools, agentic systems, automation workflows and deep engineering content — no hype, just how things actually work.' }}">
     <meta name="author" content="Gary Constable">
     <meta name="robots" content="index, follow">
 
@@ -14,42 +14,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- 📸 Open Graph (OG) -->
-    <meta property="og:title" content="Gary Constable — Full-Stack Developer">
-    <meta property="og:description" content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://ghostfrog.co.uk/"> <!-- change to your domain -->
-    <meta property="og:image" content="https://ghostfrog.co.uk/static/avatar-01.png">
-    <!-- replace with your hosted avatar -->
-    <meta property="og:site_name" content="Gary Constable">
+    {% set _og_title = og_title or title or "GhostFrog — AI Agents, Automation & Real Engineering" %}
+    {% set _og_description = og_description or description or 'GhostFrog builds practical AI tools, agentic systems, automation workflows and deep engineering content — no hype, just how things actually work.' %}
+    <meta property="og:title" content="{{ _og_title }}">
+    <meta property="og:description" content="{{ _og_description }}">
+    <meta property="og:type" content="{{ og_type or 'website' }}">
+    <meta property="og:url" content="{{ og_url or request.url }}">
+    <meta property="og:image" content="{{ og_image or 'https://ghostfrog.co.uk/static/ghostfrog-blog-banner.png' }}">
+    <meta property="og:site_name" content="GhostFrog">
 
     <!-- 🐦 Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Gary Constable — Full-Stack Developer">
-    <meta name="twitter:description" content="Full-stack developer with 15+ years of experience building e-commerce and AI-powered web platforms.">
-    <meta name="twitter:image" content="https://ghostfrog.co.uk/static/avatar-01.png">
-    <!-- replace with your image -->
+    <meta name="twitter:title" content="{{ twitter_title or _og_title }}">
+    <meta name="twitter:description" content="{{ twitter_description or _og_description }}">
+    <meta name="twitter:image" content="{{ twitter_image or og_image or 'https://ghostfrog.co.uk/static/ghostfrog-blog-banner.png' }}">
 
     <!-- 🧭 Favicon (optional) -->
     <link rel="icon" type="image/png" href="/static/avatar-01.png">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
 
-     {% if request.host == "garyconstable.co.uk" or request.host == "www.garyconstable.co.uk"
-    or  request.host == "ghostfrog.co.uk" or request.host == "www.ghostfrog.co.uk" %}
+    {% if request.host == "garyconstable.co.uk" or request.host == "www.garyconstable.co.uk"
+       or request.host == "ghostfrog.co.uk" or request.host == "www.ghostfrog.co.uk" %}
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-LL5FVE7Z1J"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag() { dataLayer.push(arguments); }
             gtag('js', new Date());
-
             gtag('config', 'G-LL5FVE7Z1J');
         </script>
     {% endif %}
 
 </head>
 <body>
-    
+
   <main class="container">
 
    {% include 'partials/header.html' %}
