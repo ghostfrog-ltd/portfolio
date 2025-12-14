@@ -171,7 +171,7 @@ def list_all_tickets() -> List[Dict[str, Any]]:
         tickets.append(_load_ticket_file(path))
 
     # If ticket_id is date-based like 2025-11-28-10, this gives newest first
-    tickets.sort(key=lambda t: t.get("ticket_id", ""), reverse=True)
+    tickets.sort(key=lambda t: t.get("ticket_id", ""), reverse=False)
     return tickets
 
 
